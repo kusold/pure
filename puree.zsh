@@ -23,6 +23,40 @@
 # \e[K  => clears everything after the cursor on the current line
 # \e[2K => clear everything on the current line
 
+#
+# My Customizations
+#
+_update_ruby_version() {
+	typeset -g ruby_version=''
+	if which rvm-prompt &> /dev/null; then
+		ruby_version="$(rvm-prompt i v g)"
+		rvm-prompt i v g
+	elif which rbenv &> /dev/null; then
+		ruby_version="$(rbenv version | sed -e "s/ (set.*$//")"
+	else
+		if which ruby &> /dev/null; then
+			ruby_version="$(ruby --version | sed -e "s/ (set.*$//")"
+		fi
+	fi
+}
+chpwd_functions+=(_update_ruby_version)
+
+_update_node_version() {
+	typeset -g node_version=''
+	if which nvm &> /dev/null; then
+		node_version="$(nvm current)"
+	else
+		if which node &> /dev/null; then
+			node_version="$(node --version)"
+		fi
+	fi
+}
+chpwd_functions+=(_update_node_version)
+
+#
+# End My Customizations
+#
+
 
 # turns seconds into human readable time
 # 165392 => 1d 21h 56m 32s
@@ -143,6 +177,11 @@ prompt_pure_preprompt_render() {
 	preprompt+=$prompt_pure_username
 	# execution time
 	preprompt+="%F{yellow}${prompt_pure_cmd_exec_time}%f"
+
+	# MRK: customized
+	preprompt+=" %F{1}ruby:${ruby_version}%f"
+	preprompt+=" %F{2}node:${node_version}%f"
+	# END MRK: customized
 
 	# make sure prompt_pure_last_preprompt is a global array
 	typeset -g -a prompt_pure_last_preprompt
