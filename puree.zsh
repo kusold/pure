@@ -179,8 +179,8 @@ prompt_pure_preprompt_render() {
 	preprompt+="%F{yellow}${prompt_pure_cmd_exec_time}%f"
 
 	# MRK: customized
-	preprompt+=" %F{1}ruby:${ruby_version}%f"
-	preprompt+=" %F{2}node:${node_version}%f"
+	[[ ! -z ${ruby_version} ]] && preprompt+=" %F{1}ruby:${ruby_version}%f"
+	[[ ! -z ${node_version} ]] && preprompt+=" %F{2}node:${node_version}%f"
 	# END MRK: customized
 
 	# make sure prompt_pure_last_preprompt is a global array
