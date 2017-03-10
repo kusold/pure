@@ -1,4 +1,4 @@
-# Pure
+# Puree
 # by Sindre Sorhus
 # https://github.com/sindresorhus/pure
 # MIT License
@@ -28,11 +28,11 @@
 #
 _update_ruby_version() {
 	typeset -g ruby_version=''
-	if which rvm-prompt &> /dev/null; then
+	if which rbenv &> /dev/null; then
+		ruby_version="$(rbenv version | sed -e "s/ (set.*$//")"
+	elif which rvm-prompt &> /dev/null; then
 		ruby_version="$(rvm-prompt i v g)"
 		rvm-prompt i v g
-	elif which rbenv &> /dev/null; then
-		ruby_version="$(rbenv version | sed -e "s/ (set.*$//")"
 	else
 		if which ruby &> /dev/null; then
 			ruby_version="$(ruby --version | sed -e "s/ (set.*$//")"
@@ -43,7 +43,9 @@ chpwd_functions+=(_update_ruby_version)
 
 _update_node_version() {
 	typeset -g node_version=''
-	if which nvm &> /dev/null; then
+	if which nodenv &> /dev/null; then
+		node_version="${${$(nodenv version)#v}[(w)0]}"
+	elif which nvm &> /dev/null; then
 		node_version="$(nvm current)"
 	else
 		if which node &> /dev/null; then
