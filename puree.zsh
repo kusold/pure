@@ -55,6 +55,30 @@ _update_node_version() {
 }
 chpwd_functions+=(_update_node_version)
 
+
+function zle-line-init zle-keymap-select {
+   VIM_PROMPT="%{$fg_bold[yellow]%} [% NORMAL]%  %{$reset_color%}"
+   RPROMPT="${${KEYMAP/vicmd/$VIM_PROMPT}/(main|viins)/}"
+   zle reset-prompt
+}
+
+zle -N zle-line-init
+zle -N zle-keymap-select
+
+export KEYTIMEOUT=1
+
+# Fix a bug when you C-c in CMD mode and you'd be prompted with CMD mode indicator, while in fact you would be in INS mode
+# Fixed by catching SIGINT (C-c), set vim_mode to INS and then repropagate the SIGINT, so if anything else depends on it, we will not break it
+function TRAPINT() {
+  vim_mode=$vim_ins_mode
+  return $(( 128 + $1 ))
+}
+
+
+prompt_puree_precmd() {
+	RPROMPT=""
+}
+
 #
 # End My Customizations
 #
@@ -251,6 +275,8 @@ prompt_pure_precmd() {
 
 	# print the preprompt
 	prompt_pure_preprompt_render "precmd"
+
+	prompt_puree_precmd
 
 	# remove the prompt_pure_cmd_timestamp, indicating that precmd has completed
 	unset prompt_pure_cmd_timestamp
